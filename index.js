@@ -1,79 +1,58 @@
 const apiKey = 'eXfHPv8f21EfPKy8vaB3TZqZ3AyV3ArvODdeRf9a'
 const endpoint = 'https://developer.nps.gov/api/v1/parks'
 
-
-var myHeaders = new Headers();
-myHeaders.append("x-api-key", "eXfHPv8f21EfPKy8vaB3TZqZ3AyV3ArvODdeRf9a");
-myHeaders.append("Cookie", "AWSALB=SNMEoPxu+C/zFyqSW+tL/vIu/pMlMrCzLfZIXTk6bIEqBGlMGxjAGMqqBPzN8lXBrcm8iiR4o328z9lNP122wHmayWUu+RCWXdLuUelrtsXvNNvR7GRaGkm5omdQ; AWSALBCORS=SNMEoPxu+C/zFyqSW+tL/vIu/pMlMrCzLfZIXTk6bIEqBGlMGxjAGMqqBPzN8lXBrcm8iiR4o328z9lNP122wHmayWUu+RCWXdLuUelrtsXvNNvR7GRaGkm5omdQ");
-
-var requestOptions = {
-  method: 'GET',
-  headers: myHeaders,
-  redirect: 'follow'
-};
-
-
-
-
-
-
-
-
-
-
-
-
+function responseHandler(response){
+    let result = ""
+    for (i=0; i<response.data.length; i++){
+        let description = response.data[i].description
+        let fullName = response.data[i].fullName
+        let url = response.data[i].url
+        temp = `<li> <h4>${fullName}</h4> <br> <p>${description}</p> <br> <a href=${url}>Website</a> </li> <br>`
+        result = result + temp;
+    }
+    display(result);
+}
 
 
 function format(parameters){
     const formattedSearch = Object.keys(parameters)
-        // I am not sure what is being done here .map(key => `${}`)
-        // { foo: 'bar' }
-        // [foo]
-        // ['foo=bar', 'name=jon']
-        // 'foo=bar&name=jon'
         .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(parameters[key])}`)
         return formattedSearch.join('&');
-
-        return Object.keys(parameters)
-        .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(parameters[key])}`)
-        .join('&');
 }
 
-function formatSingleLoop(parameters) {
-    return Object.entries(parameters).reduce((result, [key, value], i) => {
-        return `${i === 0 ? '?' : '&'}${key}=${value}`
-    }, '')
-}
-
-function display(){
+function display(result){
     //show the results
+    $('.result-list').empty();
+    $('.result-list').html(result);
 }
 
 
-function search(search, max=10) {
+function search(search, limit) {
+    if (limit < 1){
+        limit = 10;
+    }
     const parameters = {
-        //key: apiKey,
+        api_key: apiKey,
+        limit,
         q: search,
-        limit: max,
+        
     };
     let temp = format(parameters)
     let url = endpoint + '?' + temp;
-
-    fetch(url, requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+    fetch(url)
+        .then(response => response.json())
+        .then(responseJson => {
+            responseHandler(responseJson); 
+        });
 }
-
 
 function begin() {
     // event listener 
     $('.submit').on('click', function(e) {
         e.preventDefault();
         let temp = $('#state').val();
-        let max = $('#max').val();
-        search(temp, max);
+        let limit = $('#max').val();
+        search(temp, limit);
     });
 }
 
