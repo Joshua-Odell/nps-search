@@ -28,13 +28,13 @@ function display(result){
 
 
 function search(search, limit) {
-    if (limit < 1){
-        limit = 10;
-    }
+    //if (limit < 1){
+        //limit = 10;
+//}
     const parameters = {
         api_key: apiKey,
         limit,
-        q: search,
+        stateCode: search,
         
     };
     let temp = format(parameters)
@@ -48,6 +48,7 @@ function search(search, limit) {
 
 function begin() {
     // event listener 
+    document.getElementById("max").defaultValue = "10";
     $('.submit').on('click', function(e) {
         e.preventDefault();
         let temp = $('#state').val();
