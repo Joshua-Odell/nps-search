@@ -53,7 +53,13 @@ function begin() {
         e.preventDefault();
         let temp = $('#state').val();
         let limit = $('#max').val();
-        search(temp, limit);
+        console.log(temp);
+        if (temp == null || temp ===""){
+            alert("please fill in the text field");
+        }   
+        else {
+            search(temp, limit);
+        }
     });
 }
 
