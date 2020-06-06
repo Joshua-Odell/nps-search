@@ -28,9 +28,6 @@ function display(result){
 
 
 function search(search, limit) {
-    //if (limit < 1){
-        //limit = 10;
-//}
     const parameters = {
         api_key: apiKey,
         limit,
@@ -54,7 +51,10 @@ function begin() {
         let temp = $('#state').val();
         let limit = $('#max').val();
         console.log(temp);
-        if (temp == null || temp ===""){
+        if (temp === null || temp ===""){
+            alert("please fill in the text field");
+        }
+        else if (limit === null || limit === ""){
             alert("please fill in the text field");
         }   
         else {
